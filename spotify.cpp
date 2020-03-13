@@ -56,6 +56,13 @@ class Songs
     void Genpoint();
     void Artpoint();
 };
+void swap1(Songs *s,Songs *s1)
+{
+    Songs s2;
+    s2=*s;
+    *s=*s1;
+    *s1=s2;
+}
 class Playlist
 {
     public:
@@ -73,12 +80,66 @@ class Playlist
     }
     void print()
     {
-        cout<<"Playlist name: "<<pname<<endl;
+        cout<<"Playlist name: "<<pname<<endl<<endl;
         for(i=0;i<this->counter;i++)
         {
             cout<<i+1<<". "<<s[i].sName<<"\t"<<s[i].time<<" mins"<<endl;
             cout<<"Artist Name:"<<s[i].a.aName<<"\tGenre:"<<s[i].g.gName<<endl<<endl;
             cout<<"Artist points: "<<s[i].a.aPoints<<"\t Genre points: "<<s[i].g.gPoints<<endl<<endl;
+        }
+    }
+    void play(int n)
+    {
+        char ch;
+        system("CLS");
+
+        for(i=0;i<n;i++)
+        {
+
+            cout<<"We are currently playing PLaylist"<<this->pname<<endl<<endl;
+            cout<<"     Currently Playing Song: "<<this->s[i].sName<<endl;
+            cout<<"     Artist: "<<this->s[i].a.aName<<"\t Genre: "<<this->s[i].g.gName<<endl<<endl;
+            cout<<"Press Y if you like the song N if you dont or any other key to not rate the song"<<endl;
+            ch=getch();
+            if((ch=='n')||(ch=='N'))
+            {
+                review(s,n,i,-1);
+            }
+            else if((ch=='y')||(ch=='Y'))
+            {
+                review(s,n,i,1);
+            }
+            else{}
+            system("CLS");
+        }
+    }
+    void review(Songs s[],int n,int i,int num)
+    {
+        string art,gen;
+        art=s[i].a.aName;
+        gen=s[i].g.gName;
+        for(int j=0;j<n;j++)
+        {
+            if(s[j].a.aName == art)
+            {
+                s[j].a.aPoints+=num;
+            }
+            if(s[j].g.gName == gen)
+            {
+                s[j].g.gPoints+=num;
+            }
+        }
+    }
+    void sort1(int n)
+    {
+        int i,j;
+        for (i = 0; i < n-1; i++)
+        {
+            for (j = 0; j < n-i-1; j++)
+            {
+                if (s[j].g.gPoints+s[j].a.aPoints < s[j+1].g.gPoints+s[j+1].a.aPoints)
+                    swap1(&s[j], &s[j+1]);
+            }
         }
     }
 };
@@ -93,38 +154,6 @@ int nullcounter(Songs x[],int y)
             }
     }
     return y-c;
-}
-void Songs::Artpoint()
-{
-    this->a.aPoints=this->a.aPoints+1;
-}
-void Songs::Genpoint()
-{
-    this->g.gPoints+=1;
-}
-void play(Playlist P,int n)
-{
-    char ch;
-    system("CLS");
-
-    for(i=0;i<n;i++)
-    {
-
-        cout<<"We are currently playing PLaylist"<<P.pname<<endl<<endl;
-        cout<<"     Currently Playing Song: "<<P.s[i].sName<<endl;
-        cout<<"     Artist: "<<P.s[i].a.aName<<"\t Genre: "<<P.s[i].g.gName<<endl<<endl;
-        cin>>ch;
-        if((ch=='n')||(ch=='N'))
-        { }
-        else
-        {
-            cout<<"Yo"<<endl;
-            P.s[i].Artpoint();
-            P.s[i].Genpoint();
-        }
-        getch();
-        system("CLS");
-    }
 }
 int main()
 {
@@ -161,6 +190,9 @@ int main()
     Playlist p("Utkarsh's Playlist",s,nullcounter(s,y));
     p.print();
     getch();
-    play(p,y);
+    p.play(y);
+    p.sort1(y);
     p.print();
+    cout<<"\nPress any key to exit\n";
+    getch();
 }
